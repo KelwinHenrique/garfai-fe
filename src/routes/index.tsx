@@ -6,6 +6,7 @@ import { ProtectedRoute, LoadingSpinner, NotFoundPage, DashboardPage } from './c
 
 // Lazy components
 import { LoginPage, SelectAccessPage, OrdersPage } from './lazyComponents'
+import { SelectAccessRoute } from './components/SelectAccessRoute'
 
 export const AppRoutes = () => {
   return (
@@ -20,15 +21,15 @@ export const AppRoutes = () => {
       
       {/* Rotas parciais (precisam de token) */}
       <Route path="/select-access" element={
-        <ProtectedRoute requireMerchantId={false}>
+        <SelectAccessRoute>
           <Suspense fallback={<LoadingSpinner />}>
             <SelectAccessPage />
           </Suspense>
-        </ProtectedRoute>
+        </SelectAccessRoute>
       } />
      
       <Route path="/orders" element={
-        <ProtectedRoute requireMerchantId={true}>
+        <ProtectedRoute>
           <Suspense fallback={<LoadingSpinner />}>
             <OrdersPage />
           </Suspense>
@@ -36,7 +37,7 @@ export const AppRoutes = () => {
       } />
 
       <Route path="/dashboard" element={
-        <ProtectedRoute requireMerchantId={true}>
+        <ProtectedRoute>
           <Suspense fallback={<LoadingSpinner />}>
             <DashboardPage />
           </Suspense>

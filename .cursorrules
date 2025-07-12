@@ -28,9 +28,8 @@ Main features:
   ├── components/ # Reusable components specific to the Orders module 
   ├── pages/ # Page-level components (used in routes) 
   ├── store/ # Redux slice and hooks for this module 
-  ├── services/ # API calls, service logic 
   ├── types/ # TypeScript types and interfaces 
-  └── index.ts # Optional: re-export module entry points
+  └── *.routes.ts # routes for this module
 
 
 ## Components
