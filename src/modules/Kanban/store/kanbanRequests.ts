@@ -1,0 +1,104 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axiosServices from "@/shared/services/api";
+import { IKanban } from "./kanbanSlice";
+import { IOrder } from "@/modules/Orders/types/IOrder";
+
+
+export const fetchOrdersKanban = createAsyncThunk(
+  'ordersKanban/fetchOrdersKanban',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosServices.get('/orders/kanban');
+
+      console.log('response', response)
+
+      const kanban = response.data.data as IKanban ;
+      return kanban;
+    } catch (error) {
+      console.log('error', error)
+      return rejectWithValue('Failed to fetch orders kanban',);
+    }
+  }
+);
+
+export const fetchOrderByIdDetails = createAsyncThunk(
+  'ordersKanban/fetchOrderDetail',
+  async (orderId: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosServices.get(`/orders/${orderId}/details`);
+
+      console.log('response', response)
+
+      const order = response.data.data as IOrder;
+      return order;
+    } catch (error) {
+      console.log('error', error)
+      return rejectWithValue('Failed to fetch order detail');
+    }
+  }
+);
+
+export const merchantAcceptOrder = createAsyncThunk(
+  'ordersKanban/merchantAcceptOrder',
+  async (orderId: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosServices.put(`/orders/${orderId}/merchantAcceptOrder`);
+      return response.data.data as IOrder;
+    } catch (error) {
+      console.log('error', error)
+      return rejectWithValue('Failed to accept order');
+    }
+  }
+);
+
+export const setOrderReadyForDelivery = createAsyncThunk(
+  'ordersKanban/setOrderReadyForDelivery',
+  async (orderId: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosServices.put(`/orders/${orderId}/readyForDeliveryOrder`);
+      return response.data.data as IOrder;
+    } catch (error) {
+      console.log('error', error)
+      return rejectWithValue('Failed to accept order');
+    }
+  }
+);
+
+export const setOrderInDelivery = createAsyncThunk(
+  'ordersKanban/setOrderInDelivery',
+  async (orderId: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosServices.put(`/orders/${orderId}/inDeliveryOrder`);
+      return response.data.data as IOrder;
+    } catch (error) {
+      console.log('error', error)
+      return rejectWithValue('Failed to set order in delivery');
+    }
+  }
+);
+
+// export const createMenu = createAsyncThunk(
+//   'menus/createMenu',
+//   async (body: IFormCreateMenuValues, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.post(`/menus`, body);
+//       const { menu } = response.data;
+//       return { menu };
+//     } catch (error) {
+//       return rejectWithValue('create menu failed');
+//     }
+//   }
+// );
+
+// export const updateChatsConfigDetail = createAsyncThunk(
+//   'menus/updateChatsConfig',
+//   async ({ menuId, body }: { menuId: string; body: IChatFormData }, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.put(`/menus/${menuId}`, body);
+//       const { menu } = response.data;
+//       return { menu };
+//     } catch (error) {
+//       return rejectWithValue('Login failed');
+//     }
+//   }
+// );

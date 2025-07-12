@@ -13,11 +13,11 @@ export const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   // Aqui você implementaria a lógica de verificação de token e merchantId
   // Por enquanto, vou criar uma implementação básica
-  const merchantId = localStorage.getItem('merchantId')
+  // const merchantId = localStorage.getItem('merchantId')
 
-  if (!merchantId) {
-    return <Navigate to="/select-access" replace />
-  }
+  // if (!merchantId) {
+  //   return <Navigate to="/select-access" replace />
+  // }
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>

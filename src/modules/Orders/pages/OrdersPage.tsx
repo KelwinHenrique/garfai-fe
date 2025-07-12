@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { Typography, Box, CircularProgress, Alert } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '../../../store/index'
-import { fetchOrders } from '../store/ordersSlice'
 import { OrderCard } from '../components/OrderCard'
 import { RootState } from '../../../store/index'
 
@@ -10,7 +9,7 @@ export function OrdersPage() {
   const { orders, loading, error } = useAppSelector((state: RootState) => state.orders)
 
   useEffect(() => {
-    dispatch(fetchOrders({ page: 1, limit: 10 }))
+    // dispatch(fetchOrders({ page: 1, limit: 10 }))
   }, [dispatch])
 
   if (loading) {
@@ -40,16 +39,16 @@ export function OrdersPage() {
           Nenhum pedido encontrado.
         </Typography>
       ) : (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-          {orders.map((order) => (
-            <Box key={order.id} sx={{ flex: '1 1 300px', minWidth: 0 }}>
-              <OrderCard 
-                order={order}
-                onClick={() => console.log('Clicou no pedido:', order.id)}
-              />
-            </Box>
-          ))}
-        </Box>
+          // <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+          //   {orders.map((order) => (
+          //     <Box key={order.id} sx={{ flex: '1 1 300px', minWidth: 0 }}>
+          //       <OrderCard
+          //         order={order}
+          //         onClick={() => console.log('Clicou no pedido:', order.id)}
+          //       />
+          //     </Box>
+          //   ))}
+          // </Box>
       )}
     </Box>
   )
