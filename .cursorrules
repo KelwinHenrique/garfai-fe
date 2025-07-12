@@ -1,0 +1,102 @@
+# Project Context
+
+This project is called **GarfAI**.
+
+GarfAI is a B2C brazilian version of doordash/ifood, here we are building the merchant portal, where they can check incoming request and manage their store. The main differentiator from doordash or IFood the the capability of ordering via whatsapp
+
+Main features:
+- Merchants can log in to a dashboard and create stores (tenants).
+- Merchats have a Kanban board to check each incomming request 
+- Merchants can build their own menu
+
+  
+# Cursor Rules for React + TypeScript + Vite + MUI + Redux Toolkit Project
+
+## General Architecture
+
+- The project must be structured in a modular way.
+- Each **module** (e.g., Orders, Products, Users) should be self-contained:
+  - Own its **components**, **pages**, **slices/reducers**, **types**, and **services**.
+  - Avoid cross-module dependencies unless absolutely necessary.
+  - Think of each module as a standalone frontend unit.
+
+## File & Folder Structure
+
+- Use **PascalCase** for folder and component names.
+- File structure inside a module should follow:
+/src/modules/Orders/ 
+  ├── components/ # Reusable components specific to the Orders module 
+  ├── pages/ # Page-level components (used in routes) 
+  ├── store/ # Redux slice and hooks for this module 
+  ├── services/ # API calls, service logic 
+  ├── types/ # TypeScript types and interfaces 
+  └── index.ts # Optional: re-export module entry points
+
+
+## Components
+
+- Components must follow **Single Responsibility Principle**.
+- Use **functional components** and **React Hooks** only.
+- Component filenames must match their exported function name (PascalCase).
+- ✅ `OrderTable.tsx` → `export function OrderTable() { ... }`
+- Group styles with components if needed using `.tsx` + `.module.css` or styled API from MUI.
+
+## Redux Toolkit (RTK)
+
+- Each module must define its own **slice** inside `store/`.
+- Use `createSlice` and `createAsyncThunk` for logic.
+- Global store should only import and combine slices – no logic outside modules.
+- Shared logic should be extracted to shared services or utils, if truly generic.
+- To use RTK on the components, always use useAppDispatch and useAppSelector
+
+## Routing
+
+- Route-level components (pages) go inside `pages/`.
+- Each module exports its route configuration (e.g., `routes.tsx`) if needed.
+- Prefer lazy-loading routes via `React.lazy` and `Suspense`.
+
+## TypeScript
+
+- Use strict typing: avoid `any`.
+- Define common types/interfaces in `types/` within the module.
+- Use `React.FC` only if children are required, otherwise type explicitly.
+
+## Material UI
+
+- Use `@mui/material` components, styled API or `sx` prop – do not mix styling approaches in the same component.
+- Keep themes and overrides centralized under `src/theme/`.
+
+## Vite
+
+- Use absolute imports via Vite aliases (e.g., `@modules/Orders/components/...`).
+- Avoid relative imports that go up multiple directories (`../../../`).
+
+## Naming & Conventions
+
+- **Components**: PascalCase – `UserCard`, `OrderForm`
+- **Hooks**: camelCase starting with `use` – `useOrderData`
+- **Redux slices**: camelCase – `orderSlice.ts`
+- **Actions/Thunks**: camelCase – `fetchOrders`, `createOrder`
+
+## State Management
+
+- UI-only state (open modal, selected tab) should live inside the component via `useState`.
+- Use Redux only for **shared domain state** or **async flows**.
+
+## Tests
+
+- Tests must co-locate with the component or module:
+- `OrderForm.test.tsx` next to `OrderForm.tsx`
+- Use React Testing Library + Jest.
+
+## Linting & Formatting
+
+- Use ESLint with Airbnb or similar config.
+- Use Prettier with opinionated formatting.
+- Enable type-checking in CI and Git hooks.
+
+## Commit Standards
+
+- Follow [Conventional Commits](https://www.conventionalcommits.org/) (e.g., `feat(orders): add new order form`)
+- All new code must pass lint, type check, and test before merging.
+
