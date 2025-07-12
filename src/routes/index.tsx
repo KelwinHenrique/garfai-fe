@@ -8,6 +8,7 @@ import { ProtectedRoute, LoadingSpinner, NotFoundPage } from './components'
 import { LoginPage, SelectAccessPage, OrdersPage } from './lazyComponents'
 import { SelectAccessRoute } from './components/SelectAccessRoute'
 import { dashboardRoutes } from '@/modules/Dashboard/dashboard.routes'
+import { kanbanRoutes } from '@/modules/Kanban/kanban.routes'
 
 export const AppRoutes = () => {
   return (
@@ -47,7 +48,17 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         } />
       ))}
-      
+
+      {kanbanRoutes.map(route => (
+        <Route key={route.path} path={route.path} element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+              {route.element}
+            </Suspense>
+          </ProtectedRoute>
+        } />
+      ))}
+
       {/* Rota padrão - redireciona baseado no estado de autenticação */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 

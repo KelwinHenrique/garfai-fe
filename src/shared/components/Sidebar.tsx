@@ -13,7 +13,7 @@ const drawerWidth = 220
 
 const mainNavItems = [
   { label: 'Dashboard', icon: <DashboardIcon fontSize="small" />, path: '/dashboard' },
-  { label: 'Pedidos', icon: <ListAltIcon fontSize="small" />, path: '/orders' },
+  { label: 'Kanban', icon: <ListAltIcon fontSize="small" />, path: '/kanban' },
   { label: 'Menu', icon: <RestaurantMenuIcon fontSize="small" />, path: '/menu' },
   { label: 'Analytics', icon: <BarChartIcon fontSize="small" />, path: '/analytics' },
   { label: 'Equipe', icon: <GroupIcon fontSize="small" />, path: '/team' },
