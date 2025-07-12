@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { store } from './store/index'
 import { theme } from './theme/index'
 import { Layout } from './shared/components/Layout'
+import AppRoutes from './routes'
 
 function App() {
   return (
@@ -13,10 +14,7 @@ function App() {
         <CssBaseline />
         <BrowserRouter>
           <Layout>
-            <div>
-              <h1>Bem-vindo ao GarfAI</h1>
-              <p>Portal do Comerciante</p>
-            </div>
+            <AppRoutes />
           </Layout>
         </BrowserRouter>
       </ThemeProvider>

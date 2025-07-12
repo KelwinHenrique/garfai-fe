@@ -100,3 +100,4 @@ Main features:
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) (e.g., `feat(orders): add new order form`)
 - All new code must pass lint, type check, and test before merging.
 
+- Use English as the primary language for read-me, commits and comments

@@ -53,4 +53,6 @@ export function OrdersPage() {
       )}
     </Box>
   )
-} 
+}
+
+export default OrdersPage 
