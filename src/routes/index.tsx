@@ -2,11 +2,12 @@ import { Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 
 // Componentes de proteção e loading
-import { ProtectedRoute, LoadingSpinner, NotFoundPage, DashboardPage } from './components'
+import { ProtectedRoute, LoadingSpinner, NotFoundPage } from './components'
 
 // Lazy components
 import { LoginPage, SelectAccessPage, OrdersPage } from './lazyComponents'
 import { SelectAccessRoute } from './components/SelectAccessRoute'
+import { dashboardRoutes } from '@/modules/Dashboard/dashboard.routes'
 
 export const AppRoutes = () => {
   return (
@@ -36,13 +37,16 @@ export const AppRoutes = () => {
         </ProtectedRoute>
       } />
 
-      <Route path="/dashboard" element={
-        <ProtectedRoute>
-          <Suspense fallback={<LoadingSpinner />}>
-            <DashboardPage />
-          </Suspense>
-        </ProtectedRoute>
-      } />
+      {/* Rotas do Dashboard (modular) */}
+      {dashboardRoutes.map(route => (
+        <Route key={route.path} path={route.path} element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+              {route.element}
+            </Suspense>
+          </ProtectedRoute>
+        } />
+      ))}
       
       {/* Rota padrão - redireciona baseado no estado de autenticação */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
