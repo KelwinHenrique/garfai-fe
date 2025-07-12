@@ -1,83 +1,46 @@
-import { ApiResponse, PaginatedResponse } from '@shared/types'
+import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+export const baseURL = () => {
+  const environment = process.env.NODE_ENV;
 
-class ApiService {
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
-    const url = `${API_BASE_URL}${endpoint}`
-    
-    const config: RequestInit = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      ...options,
-    }
-
-    // Adicionar token de autenticação se disponível
-    const token = localStorage.getItem('authToken')
-    if (token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${token}`,
-      }
-    }
-
-    try {
-      const response = await fetch(url, config)
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      return await response.json()
-    } catch (error) {
-      console.error('API request failed:', error)
-      throw error
-    }
+  if (environment === 'prod') {
+    return 'http://api.garfai.com.br/';
   }
-
-  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
-    return this.request<ApiResponse<T>>(endpoint)
-  }
-
-  async getPaginated<T>(endpoint: string, page = 1, limit = 10): Promise<PaginatedResponse<T>> {
-    const queryParams = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-    })
-    return this.request<PaginatedResponse<T>>(`${endpoint}?${queryParams}`)
-  }
-
-  async post<T>(endpoint: string, data: Record<string, unknown>): Promise<ApiResponse<T>> {
-    return this.request<ApiResponse<T>>(endpoint, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async put<T>(endpoint: string, data: Record<string, unknown>): Promise<ApiResponse<T>> {
-    return this.request<ApiResponse<T>>(endpoint, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async patch<T>(endpoint: string, data: Record<string, unknown>): Promise<ApiResponse<T>> {
-    return this.request<ApiResponse<T>>(endpoint, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
-    return this.request<ApiResponse<T>>(endpoint, {
-      method: 'DELETE',
-    })
-  }
+  return 'http://localhost:3000/';
 }
 
-export const apiService = new ApiService() 
+const axiosServices = axios.create({
+  baseURL: baseURL(),
+  withCredentials: true,
+});
+
+
+axiosServices.interceptors.request.use(
+  async (config) => {
+    const selectedAccess = localStorage.getItem('selectedAccess');
+    const selectedEnvironment = localStorage.getItem('environment');
+    if (selectedAccess) {
+      config.headers['access'] = selectedAccess;
+    }
+    if (selectedEnvironment) {
+      config.headers['environment'] = selectedEnvironment;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+axiosServices.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && !window.location.href.includes('/login')) {
+      window.location.pathname = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default axiosServices;

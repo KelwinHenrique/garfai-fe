@@ -46,7 +46,6 @@ export const AppRoutes = () => {
       {/* Rota padrão - redireciona baseado no estado de autenticação */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-      
       {/* Rota 404 */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
