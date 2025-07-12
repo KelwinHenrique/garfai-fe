@@ -3,24 +3,24 @@ import { Navigate } from 'react-router-dom'
 interface ProtectedRouteProps {
   children: React.ReactNode
   requireToken?: boolean
-  requireEnvironmentId?: boolean
+  requireMerchantId?: boolean
 }
 
 export const ProtectedRoute = ({ 
   children, 
-  requireToken = false, 
-  requireEnvironmentId = false 
+  requireToken = true,
+  requireMerchantId = true
 }: ProtectedRouteProps) => {
-  // Aqui você implementaria a lógica de verificação de token e environmentId
+  // Aqui você implementaria a lógica de verificação de token e merchantId
   // Por enquanto, vou criar uma implementação básica
   const token = localStorage.getItem('token')
-  const environmentId = localStorage.getItem('environmentId')
+  const merchantId = localStorage.getItem('merchantId')
 
   if (requireToken && !token) {
     return <Navigate to="/login" replace />
   }
 
-  if (requireEnvironmentId && !environmentId) {
+  if (requireMerchantId && !merchantId) {
     return <Navigate to="/select-access" replace />
   }
 

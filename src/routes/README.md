@@ -32,7 +32,7 @@ Rotas que requerem apenas token de autenticação:
 - `/setup-store` - Configuração inicial da loja
 
 ### 3. Rotas Fechadas (Closed Routes)
-Rotas que requerem token e environmentId:
+Rotas que requerem token e merchantId:
 - `/dashboard` - Dashboard principal
 - `/orders` - Gerenciamento de pedidos
 - `/profile` - Perfil do usuário
@@ -59,7 +59,7 @@ export const AppRoutes = () => {
       
       {/* Rotas fechadas */}
       <Route path="/dashboard" element={
-        <ProtectedRoute requireToken={true} requireEnvironmentId={true}>
+        <ProtectedRoute requireToken={true} requiremerchantId={true}>
           <DashboardPage />
         </ProtectedRoute>
       } />
@@ -73,7 +73,7 @@ export const AppRoutes = () => {
 ### `ProtectedRoute.tsx`
 Responsável pela verificação de permissões de acesso:
 - Verifica token de autenticação
-- Verifica environmentId
+- Verifica merchantId
 - Redireciona automaticamente se necessário
 
 ### `LoadingSpinner.tsx`
@@ -116,7 +116,7 @@ export const NovaPagina = lazy(() => import('../modules/NovoModulo/pages/NovaPag
 ### 2. Adicionar rota em `index.tsx`:
 ```typescript
 <Route path="/nova-rota" element={
-  <ProtectedRoute requireToken={true} requireEnvironmentId={true}>
+  <ProtectedRoute requireToken={true} requiremerchantId={true}>
     <Suspense fallback={<LoadingSpinner />}>
       <NovaPagina />
     </Suspense>
@@ -128,7 +128,7 @@ export const NovaPagina = lazy(() => import('../modules/NovoModulo/pages/NovaPag
 
 O sistema utiliza localStorage para gerenciar o estado de autenticação:
 - `token`: Token de autenticação do usuário
-- `environmentId`: ID do ambiente/loja selecionada
+- `merchantId`: ID do ambiente/loja selecionada
 
 ## Fluxo de Navegação
 

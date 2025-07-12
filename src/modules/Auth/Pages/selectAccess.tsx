@@ -1,40 +1,74 @@
 import { useState } from 'react'
-import { 
-  Box, 
-  Typography, 
-  Card, 
-  CardContent, 
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
   CardActionArea,
   Grid,
-  Button 
+  Button,
+  Avatar
 } from '@mui/material'
-import { Store, Business } from '@mui/icons-material'
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
+import StorefrontIcon from '@mui/icons-material/Storefront'
+import BarChartIcon from '@mui/icons-material/BarChart'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 
-interface Store {
+interface IOrganization {
   id: string
   name: string
-  type: 'restaurant' | 'market' | 'pharmacy'
+  role: string
+  users: number
+  color: string
+  icon: React.ReactNode
 }
 
+const organizations: IOrganization[] = [
+  {
+    id: '1',
+    name: 'TechCorp Solutions',
+    role: 'Administrador',
+    users: 12,
+    color: '#4F8CFF',
+    icon: <RocketLaunchIcon fontSize="large" />,
+  },
+  {
+    id: '2',
+    name: 'StartupHub Inc',
+    role: 'Editor',
+    users: 5,
+    color: '#3DC97B',
+    icon: <StorefrontIcon fontSize="large" />,
+  },
+  {
+    id: '3',
+    name: 'Analytics Pro',
+    role: 'Visualizador',
+    users: 25,
+    color: '#8B4FFF',
+    icon: <BarChartIcon fontSize="large" />,
+  },
+  {
+    id: '4',
+    name: 'E-commerce Plus',
+    role: 'Gerente',
+    users: 8,
+    color: '#FF8C4F',
+    icon: <ShoppingCartIcon fontSize="large" />,
+  },
+]
+
 export function SelectAccessPage() {
-  const [selectedStore, setSelectedStore] = useState<string | null>(null)
+  const [selectedOrg, setSelectedOrg] = useState<string | null>(null)
 
-  // Mock data - substituir por dados reais da API
-  const stores: Store[] = [
-    { id: '1', name: 'Restaurante do João', type: 'restaurant' },
-    { id: '2', name: 'Mercado Central', type: 'market' },
-    { id: '3', name: 'Farmácia Popular', type: 'pharmacy' }
-  ]
-
-  const handleStoreSelect = (storeId: string) => {
-    setSelectedStore(storeId)
-    // Salvar environmentId no localStorage
-    localStorage.setItem('environmentId', storeId)
+  const handleSelect = (orgId: string) => {
+    setSelectedOrg(orgId)
+    localStorage.setItem('organizationId', orgId)
   }
 
   const handleContinue = () => {
-    if (selectedStore) {
-      // Redirecionar para o dashboard
+    if (selectedOrg) {
       window.location.href = '/dashboard'
     }
   }
@@ -47,62 +81,81 @@ export function SelectAccessPage() {
         alignItems: 'center',
         minHeight: '100vh',
         bgcolor: 'background.default',
-        p: 3
+        p: 3,
       }}
     >
-      <Typography variant="h4" component="h1" gutterBottom align="center">
-        Selecione sua Loja
+      <Typography variant="h4" component="h1" gutterBottom align="center" fontWeight={700}>
+        Selecione sua Loja 🏘️
       </Typography>
-      
       <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4 }}>
-        Escolha qual loja você deseja gerenciar
+        Escolha o ambiente onde deseja gerenciar
       </Typography>
-
-      <Grid container spacing={3} sx={{ maxWidth: 800, mb: 4 }}>
-        {stores.map((store) => (
-          <Grid item xs={12} sm={6} md={4} key={store.id}>
-            <Card 
-              sx={{ 
-                height: '100%',
-                border: selectedStore === store.id ? 2 : 1,
-                borderColor: selectedStore === store.id ? 'primary.main' : 'divider'
+      <Grid container spacing={2} sx={{ maxWidth: 480, mb: 3 }}>
+        {organizations.map((org) => (
+          <Grid component="div" size={{ xs: 12 }} key={org.id}>
+            <Card
+              sx={{
+                border: selectedOrg === org.id ? 2 : 1,
+                borderColor: selectedOrg === org.id ? 'primary.main' : 'divider',
+                boxShadow: selectedOrg === org.id ? 4 : 1,
+                borderRadius: 3,
+                transition: '0.2s',
+                cursor: 'pointer',
               }}
             >
-              <CardActionArea 
-                onClick={() => handleStoreSelect(store.id)}
-                sx={{ height: '100%' }}
-              >
-                <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                  {store.type === 'restaurant' ? (
-                    <Store sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
-                  ) : (
-                    <Business sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
-                  )}
-                  
-                  <Typography variant="h6" component="h2" gutterBottom>
-                    {store.name}
-                  </Typography>
-                  
-                  <Typography variant="body2" color="text.secondary">
-                    {store.type === 'restaurant' ? 'Restaurante' : 
-                     store.type === 'market' ? 'Mercado' : 'Farmácia'}
-                  </Typography>
+              <CardActionArea onClick={() => handleSelect(org.id)}>
+                <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 2 }}>
+                  <Avatar sx={{ bgcolor: org.color, width: 48, height: 48 }}>
+                    {org.icon}
+                  </Avatar>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="subtitle1" fontWeight={600}>
+                      {org.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {org.role}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {org.users} usuários ativos
+                    </Typography>
+                  </Box>
                 </CardContent>
               </CardActionArea>
             </Card>
           </Grid>
         ))}
+        {/* Card para criar nova organização */}
+        <Grid component="div" size={{ xs: 12 }}>
+          <Card
+            sx={{
+              border: '1px dashed',
+              borderColor: 'divider',
+              background: 'transparent',
+              boxShadow: 'none',
+              borderRadius: 3,
+              cursor: 'pointer',
+              transition: '0.2s',
+              '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' },
+            }}
+          >
+            <CardActionArea onClick={() => alert('Funcionalidade de criar nova organização!')}>
+              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 2 }}>
+                <Avatar sx={{ bgcolor: 'background.paper', color: 'primary.main', border: '1px solid', borderColor: 'primary.main', width: 48, height: 48 }}>
+                  <AddCircleOutlineIcon fontSize="large" />
+                </Avatar>
+                <Box>
+                  <Typography variant="subtitle1" fontWeight={600} color="primary.main">
+                    Criar Nova Organização
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Configure um novo ambiente
+                  </Typography>
+                </Box>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        </Grid>
       </Grid>
-
-      <Button
-        variant="contained"
-        size="large"
-        onClick={handleContinue}
-        disabled={!selectedStore}
-        sx={{ minWidth: 200 }}
-      >
-        Continuar
-      </Button>
     </Box>
   )
 }

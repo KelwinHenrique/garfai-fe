@@ -20,7 +20,7 @@ export const AppRoutes = () => {
       
       {/* Rotas parciais (precisam de token) */}
       <Route path="/select-access" element={
-        <ProtectedRoute requireToken={true}>
+        <ProtectedRoute requireToken={true} requireMerchantId={false}>
           <Suspense fallback={<LoadingSpinner />}>
             <SelectAccessPage />
           </Suspense>
@@ -28,7 +28,7 @@ export const AppRoutes = () => {
       } />
      
       <Route path="/orders" element={
-        <ProtectedRoute requireToken={true} requireEnvironmentId={true}>
+        <ProtectedRoute requireToken={true} requireMerchantId={true}>
           <Suspense fallback={<LoadingSpinner />}>
             <OrdersPage />
           </Suspense>
@@ -36,7 +36,7 @@ export const AppRoutes = () => {
       } />
 
       <Route path="/dashboard" element={
-        <ProtectedRoute requireToken={true} requireEnvironmentId={true}>
+        <ProtectedRoute requireToken={true} requireMerchantId={true}>
           <Suspense fallback={<LoadingSpinner />}>
             <DashboardPage />
           </Suspense>
