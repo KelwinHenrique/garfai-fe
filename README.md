@@ -2,6 +2,8 @@
 
 GarfAI é uma plataforma B2C brasileira similar ao iFood/DoorDash, com foco na capacidade de pedidos via WhatsApp. Este repositório contém o portal do comerciante, onde eles podem gerenciar suas lojas e pedidos.
 
+![Demo do Portal do Comerciante](public/order.gif)
+
 ## 🚀 Tecnologias
 
 - **React 19** - Biblioteca para interfaces de usuário
