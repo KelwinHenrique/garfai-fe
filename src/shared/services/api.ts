@@ -6,7 +6,7 @@ export const baseURL = () => {
   if (environment === 'prod') {
     return 'http://api.garfai.com.br/';
   }
-  return 'http://localhost:3000/';
+  return 'http://localhost:4000/';
 }
 
 const axiosServices = axios.create({

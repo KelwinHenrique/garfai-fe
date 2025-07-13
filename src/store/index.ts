@@ -3,12 +3,14 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import ordersReducer from '../modules/Orders/store/ordersSlice'
 import kanbanReducer from '@/modules/Kanban/store/kanbanSlice'
 import menusReducer from '@/modules/Menus/store/menusSlice'
+import authReducer from '@/modules/Auth/store/authSlice'
 
 export const store = configureStore({
   reducer: {
     orders: ordersReducer,
     kanban: kanbanReducer,
     menus: menusReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

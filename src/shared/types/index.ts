@@ -5,13 +5,6 @@ export interface BaseEntity {
   updatedAt: string
 }
 
-// Tipos para autenticação
-export interface User extends BaseEntity {
-  email: string
-  name: string
-  role: 'merchant' | 'admin'
-}
-
 // Tipos para stores/tenants
 export interface Store extends BaseEntity {
   name: string

@@ -1,7 +1,9 @@
 import { AppBar, Toolbar, Typography, Box, Avatar, Breadcrumbs, Link as MuiLink, IconButton, Badge } from '@mui/material'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import { useLocation, Link as RouterLink } from 'react-router-dom'
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '@/store'
+import { getMe } from '@/modules/Auth/store/authRequests'
 
 function getBreadcrumbs(pathname: string) {
   const pathnames = pathname.split('/').filter((x) => x)
@@ -12,10 +14,24 @@ function getBreadcrumbs(pathname: string) {
 }
 
 export function Topbar() {
+  const dispatch = useAppDispatch()
   const location = useLocation()
   const breadcrumbs = useMemo(() => getBreadcrumbs(location.pathname), [location.pathname])
-  // Mock do usuário logado
-  const user = { name: 'João Silva', role: 'Admin' }
+
+  // Dados do usuário do Redux
+  const user = useAppSelector((state) => state.auth.user)
+  const loadingUser = useAppSelector((state) => state.auth.loadingUser)
+
+  // Buscar dados do usuário quando o componente montar
+  useEffect(() => {
+    if (!user) {
+      dispatch(getMe())
+    }
+  }, [dispatch, user])
+
+  // Fallback para quando não há dados do usuário
+  const displayName = user?.name || 'Usuário'
+  const displayRole = user?.role === 'merchant' ? 'Mercador' : user?.role === 'admin' ? 'Administrador' : 'Usuário'
 
   return (
     <AppBar position="static" color="inherit" elevation={0} sx={{ borderBottom: '1.5px solid #e0e4f6', minHeight: 64, zIndex: 1101 }}>
@@ -48,10 +64,31 @@ export function Topbar() {
             </Badge>
           </IconButton>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Avatar sx={{ bgcolor: 'primary.main', width: 40, height: 40 }}>{user.name[0]}</Avatar>
+            <Avatar
+              sx={{
+                bgcolor: 'primary.main',
+                width: 40,
+                height: 40,
+                opacity: loadingUser ? 0.6 : 1
+              }}
+            >
+              {displayName[0]}
+            </Avatar>
             <Box sx={{ ml: 0.5 }}>
-              <Typography variant="subtitle2" fontWeight={600} sx={{ lineHeight: 1 }}>{user.name}</Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1 }}>{user.role}</Typography>
+              <Typography
+                variant="subtitle2"
+                fontWeight={600}
+                sx={{ lineHeight: 1 }}
+              >
+                {loadingUser ? 'Carregando...' : displayName}
+              </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ lineHeight: 1 }}
+              >
+                {displayRole}
+              </Typography>
             </Box>
           </Box>
         </Box>

@@ -5,19 +5,18 @@ import { Topbar } from '@/shared/components/Topbar'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
-  requireMerchantId?: boolean
 }
 
 export const ProtectedRoute = ({ 
   children,
 }: ProtectedRouteProps) => {
-  // Aqui você implementaria a lógica de verificação de token e merchantId
+  // Aqui você implementaria a lógica de verificação de token e envir
   // Por enquanto, vou criar uma implementação básica
-  // const merchantId = localStorage.getItem('merchantId')
+  const environmentId = localStorage.getItem('environmentId')
 
-  // if (!merchantId) {
-  //   return <Navigate to="/select-access" replace />
-  // }
+  if (!environmentId) {
+    return <Navigate to="/select-access" replace />
+  }
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
