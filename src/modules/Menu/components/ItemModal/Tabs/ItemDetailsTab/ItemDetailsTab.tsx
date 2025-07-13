@@ -1,17 +1,165 @@
 "use client"
 
 import type React from "react"
-import { TextField, Box, Typography, Button, Grid, Paper } from "@mui/material"
-import { AddPhotoAlternate as ImagePlusIcon, Delete as Trash2Icon, Person as UserIcon, Group as UsersIcon } from "@mui/icons-material"
+import { useState, useEffect, useCallback } from "react"
+import { TextField, Box, Typography, Button, Grid, Paper, CircularProgress, Alert } from "@mui/material"
+import { AddPhotoAlternate as ImagePlusIcon, Delete as Trash2Icon, Person as UserIcon, Group as UsersIcon, AutoAwesome as AIEnhanceIcon } from "@mui/icons-material"
 import { EPortionSize, portionSizeOptions } from "@/modules/Menu/models/IMenu"
 import { ICreateUpdateItemDetailBody } from "@/modules/Menu/models/ICreateUpdateItemDetailBody"
+import { enhanceImageWithAI, getAIJobStatus } from "@/modules/Menu/store/menuRequests"
 
 interface ItemDetailsTabProps {
   itemData: ICreateUpdateItemDetailBody
-  onDataChange: (field: keyof ICreateUpdateItemDetailBody, value: any) => void
+  onDataChange: (field: keyof ICreateUpdateItemDetailBody, value: string | number | null | undefined) => void
+  itemId?: string | null
 }
 
-export const ItemDetailsTab: React.FC<ItemDetailsTabProps> = ({ itemData, onDataChange }) => {
+interface AIEnhancementState {
+  isEnhancing: boolean
+  jobId: string | null
+  status: 'idle' | 'pending' | 'processing' | 'completed' | 'failed'
+  error: string | null
+  progress: number
+}
+
+export const ItemDetailsTab: React.FC<ItemDetailsTabProps> = ({ itemData, onDataChange, itemId }) => {
+  const [aiState, setAIState] = useState<AIEnhancementState>({
+    isEnhancing: false,
+    jobId: null,
+    status: 'idle',
+    error: null,
+    progress: 0
+  })
+
+  const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(null)
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval)
+      }
+    }
+  }, [pollingInterval])
+
+  const startEnhancement = useCallback(async () => {
+    if (!itemData.logoUrl || !itemId || itemId === '') {
+      setAIState(prev => ({ ...prev, error: 'Imagem e ID do item são necessários' }))
+      return
+    }
+
+    try {
+      setAIState(prev => ({
+        ...prev,
+        isEnhancing: true,
+        status: 'pending',
+        error: null,
+        progress: 0
+      }))
+
+      const response = await enhanceImageWithAI({
+        imageUrl: `https://static.ifood-static.com.br/image/upload/t_low/pratos/${itemData.logoUrl}`,
+        itemId: itemId || ''
+      })
+
+      if (response.success) {
+        setAIState(prev => ({
+          ...prev,
+          jobId: response.data.jobId,
+          status: 'processing',
+          progress: 10
+        }))
+
+        // Start polling
+        const interval = setInterval(async () => {
+          try {
+            const jobResponse = await getAIJobStatus(response.data.jobId)
+
+            if (jobResponse.success) {
+              const job = jobResponse.data
+
+              if (job.status === 'completed' && job.enhancedImageUrl) {
+                setAIState(prev => ({
+                  ...prev,
+                  status: 'completed',
+                  progress: 100,
+                  isEnhancing: false
+                }))
+
+                // Update the image URL with the enhanced version
+                if (job.enhancedImageUrl) {
+                  onDataChange("logoUrl", job.enhancedImageUrl)
+                }
+
+                clearInterval(interval)
+                setPollingInterval(null)
+              } else if (job.status === 'failed') {
+                setAIState(prev => ({
+                  ...prev,
+                  status: 'failed',
+                  error: job.errorMessage || 'Falha no processamento da IA',
+                  isEnhancing: false
+                }))
+                clearInterval(interval)
+                setPollingInterval(null)
+              } else {
+                // Update progress based on time elapsed
+                const startTime = new Date(job.startedAt).getTime()
+                const currentTime = new Date().getTime()
+                const elapsed = currentTime - startTime
+                const estimatedTotal = 45000 // 45 seconds
+                const progress = Math.min(90, 10 + (elapsed / estimatedTotal) * 80)
+
+                setAIState(prev => ({
+                  ...prev,
+                  progress: Math.round(progress)
+                }))
+              }
+            }
+          } catch {
+            setAIState(prev => ({
+              ...prev,
+              status: 'failed',
+              error: 'Erro ao verificar status do processamento',
+              isEnhancing: false
+            }))
+            clearInterval(interval)
+            setPollingInterval(null)
+          }
+        }, 2000) // Poll every 2 seconds
+
+        setPollingInterval(interval)
+      } else {
+        setAIState(prev => ({
+          ...prev,
+          status: 'failed',
+          error: 'Falha ao iniciar processamento',
+          isEnhancing: false
+        }))
+      }
+    } catch {
+      setAIState(prev => ({
+        ...prev,
+        status: 'failed',
+        error: 'Erro ao iniciar melhoria de imagem',
+        isEnhancing: false
+      }))
+    }
+  }, [itemData.logoUrl, itemId, onDataChange])
+
+  const cancelEnhancement = useCallback(() => {
+    if (pollingInterval) {
+      clearInterval(pollingInterval)
+      setPollingInterval(null)
+    }
+    setAIState(prev => ({
+      ...prev,
+      isEnhancing: false,
+      status: 'idle',
+      error: null,
+      progress: 0
+    }))
+  }, [pollingInterval])
 
   const getPortionIcon = (value: EPortionSize) => {
     switch (value) {
@@ -75,8 +223,23 @@ export const ItemDetailsTab: React.FC<ItemDetailsTabProps> = ({ itemData, onData
   }
 
   const getPortionLabel = (value: EPortionSize) => {
-    const option = portionSizeOptions.find((opt: any) => opt.value === value)
+    const option = portionSizeOptions.find((opt) => opt.value === value)
     return option?.label || "N/A"
+  }
+
+  const getStatusMessage = () => {
+    switch (aiState.status) {
+      case 'pending':
+        return 'Iniciando processamento...'
+      case 'processing':
+        return `Processando imagem... ${aiState.progress}%`
+      case 'completed':
+        return 'Imagem melhorada com sucesso!'
+      case 'failed':
+        return 'Falha no processamento'
+      default:
+        return ''
+    }
   }
 
   return (
@@ -173,7 +336,7 @@ export const ItemDetailsTab: React.FC<ItemDetailsTabProps> = ({ itemData, onData
             </Typography>
 
             <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-              {portionSizeOptions.map((option: any) => (
+              {portionSizeOptions.map((option) => (
                 <Button
                   key={option.value}
                   variant={itemData.portionSizeTag === option.value ? "contained" : "outlined"}
@@ -233,7 +396,11 @@ export const ItemDetailsTab: React.FC<ItemDetailsTabProps> = ({ itemData, onData
               {itemData.logoUrl ? (
                 <Box sx={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
                   <img
-                    src={itemData.logoUrl ? `https://static.ifood-static.com.br/image/upload/t_low/pratos/${itemData.logoUrl}` : "/placeholder.svg"}
+                    src={itemData.logoUrl ?
+                      itemData.logoUrl.startsWith('https') ?
+                        itemData.logoUrl
+                        : `https://static.ifood-static.com.br/image/upload/t_low/pratos/${itemData.logoUrl}`
+                      : "/placeholder.svg"}
                     alt={itemData.description || "Item image"}
                     style={{
                       height: 180,
@@ -244,6 +411,70 @@ export const ItemDetailsTab: React.FC<ItemDetailsTabProps> = ({ itemData, onData
                       aspectRatio: "1/1"
                     }}
                   />
+
+                  {/* AI Enhancement Button */}
+                  <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+                    <Button
+                      startIcon={<AIEnhanceIcon fontSize="small" />}
+                      onClick={startEnhancement}
+                      disabled={aiState.isEnhancing}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      sx={{ minWidth: 120 }}
+                    >
+                      {aiState.isEnhancing ? 'Processando...' : 'Melhorar com IA'}
+                    </Button>
+
+                    {aiState.isEnhancing && (
+                      <Button
+                        onClick={cancelEnhancement}
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                      >
+                        Cancelar
+                      </Button>
+                    )}
+                  </Box>
+
+                  {/* Progress and Status */}
+                  {aiState.isEnhancing && (
+                    <Box sx={{ width: '100%', mb: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <CircularProgress size={16} />
+                        <Typography variant="caption" color="text.secondary">
+                          {getStatusMessage()}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ width: '100%', bgcolor: 'grey.200', borderRadius: 1, height: 4 }}>
+                        <Box
+                          sx={{
+                            width: `${aiState.progress}%`,
+                            height: '100%',
+                            bgcolor: 'primary.main',
+                            borderRadius: 1,
+                            transition: 'width 0.3s ease'
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                  )}
+
+                  {/* Error Alert */}
+                  {aiState.error && (
+                    <Alert severity="error" sx={{ mb: 2, width: '100%' }}>
+                      {aiState.error}
+                    </Alert>
+                  )}
+
+                  {/* Success Alert */}
+                  {aiState.status === 'completed' && (
+                    <Alert severity="success" sx={{ mb: 2, width: '100%' }}>
+                      Imagem melhorada com sucesso!
+                    </Alert>
+                  )}
+
                   <Button
                     startIcon={<Trash2Icon fontSize="small" />}
                     onClick={() => onDataChange("logoUrl", null)}

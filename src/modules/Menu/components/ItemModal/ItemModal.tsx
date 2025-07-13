@@ -172,7 +172,7 @@ export const ItemModal = () => {
   };
 
   const renderTabContent = (formik: FormikProps<ICreateUpdateItemDetailBody>) => {
-    const props = { itemData: formik.values, onDataChange: formik.setFieldValue };
+    const props = { itemData: formik.values, onDataChange: formik.setFieldValue, itemId };
     switch (activeTab) {
       case TABS[0]: return <ItemDetailsTab {...props} />;
       case TABS[1]: return <ItemPriceTab {...props} />;

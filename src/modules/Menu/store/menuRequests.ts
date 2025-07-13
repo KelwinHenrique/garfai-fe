@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IMenu } from "../models/IMenu";
 import { IItemDetail } from "../models/IItem";
 import axiosServices from "@/shared/services/api";
+import { IAIEnhancementRequest, IAIEnhancementResponse, IAIJobStatusResponse } from "../models/ICreateUpdateItemDetailBody"
 
 
 export const fetchMenuDetail = createAsyncThunk(
@@ -14,7 +15,7 @@ export const fetchMenuDetail = createAsyncThunk(
 
       const chat = response.data.data as IMenu;
       return chat;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Failed to fetch access');
     }
   }
@@ -29,8 +30,19 @@ export const fetchItemDetail = createAsyncThunk(
 
       const item = response.data.data as IItemDetail;
       return item;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Failed to fetch item');
     }
   }
 );
+
+// AI Image Enhancement
+export const enhanceImageWithAI = async (data: IAIEnhancementRequest): Promise<IAIEnhancementResponse> => {
+  const response = await axiosServices.post('/agents/food-image', data)
+  return response.data
+}
+
+export const getAIJobStatus = async (jobId: string): Promise<IAIJobStatusResponse> => {
+  const response = await axiosServices.get(`/agents/food-image/job/${jobId}`)
+  return response.data
+}
