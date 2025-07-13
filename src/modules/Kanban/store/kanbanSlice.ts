@@ -67,8 +67,8 @@ const initialState: IMenusState = {
   orderDetails: null
 };
 
-const menusSlice = createSlice({
-  name: 'menus',
+const kanbanSlice = createSlice({
+  name: 'kanban',
   initialState,
   reducers: {
     selectOrder: (state, action: PayloadAction<string>) => {
@@ -93,8 +93,6 @@ const menusSlice = createSlice({
       state.loadingOrdersKanban = false;
 
         state.ordersKanban = Object.keys(action.payload).reduce((acc, key) => {
-
-          console.log('action.payload[key]', action.payload[key])
 
           return {
             ...acc,
@@ -226,5 +224,5 @@ const menusSlice = createSlice({
   },
 });
 
-export const { selectOrder, toggleSection } = menusSlice.actions;
-export default menusSlice.reducer; 
+export const { selectOrder, toggleSection } = kanbanSlice.actions;
+export default kanbanSlice.reducer; 

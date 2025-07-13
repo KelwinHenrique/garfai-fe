@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosServices from "@/shared/services/api";
-import { IKanban } from "./kanbanSlice";
 import { IOrder } from "@/modules/Orders/types/IOrder";
 
 export interface IOrderKanbanResponse {
