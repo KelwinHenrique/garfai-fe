@@ -3,16 +3,19 @@ import axiosServices from "@/shared/services/api";
 import { IKanban } from "./kanbanSlice";
 import { IOrder } from "@/modules/Orders/types/IOrder";
 
+export interface IOrderKanbanResponse {
+  [key: string]: IOrder[]
+}
 
 export const fetchOrdersKanban = createAsyncThunk(
   'ordersKanban/fetchOrdersKanban',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosServices.get('/orders/kanban');
+      const response = await axiosServices.get('/orders/by-status');
 
       console.log('response', response)
 
-      const kanban = response.data.data as IKanban ;
+      const kanban = response.data.data as IOrderKanbanResponse;
       return kanban;
     } catch (error) {
       console.log('error', error)
@@ -25,7 +28,7 @@ export const fetchOrderByIdDetails = createAsyncThunk(
   'ordersKanban/fetchOrderDetail',
   async (orderId: string, { rejectWithValue }) => {
     try {
-      const response = await axiosServices.get(`/orders/${orderId}/details`);
+      const response = await axiosServices.get(`/orders/${orderId}/merchant`);
 
       console.log('response', response)
 

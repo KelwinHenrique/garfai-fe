@@ -45,7 +45,7 @@ export interface IOrderChoice {
   id: string
   nameAtPurchase: string
   displayOrder: number
-  orderGarnishItems: IOrderGarnishItem[]
+  garnishItems: IOrderGarnishItem[]
 }
 
 export interface IOrderItem {
@@ -58,7 +58,7 @@ export interface IOrderItem {
   notes: string | null
   displayOrder: number
   catalogItemId: string
-  orderChoices: IOrderChoice[]
+  choices: IOrderChoice[]
 }
 
 export interface IClient {
@@ -87,7 +87,7 @@ export interface IOrder {
   deliveryAddressZipcode: string
   deliveryInstructions: string | null
   client: IClient
-  orderItems: IOrderItem[]
+  items: IOrderItem[]
   createdAt: string
   updatedAt: string
   acceptedAt: string | null

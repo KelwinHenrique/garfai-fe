@@ -17,6 +17,7 @@ const axiosServices = axios.create({
 
 axiosServices.interceptors.request.use(
   async (config) => {
+    // Sempre enviar o environmentId se disponível
     const selectedEnvironment = localStorage.getItem('environmentId');
     if (selectedEnvironment) {
       config.headers['environmentId'] = selectedEnvironment;

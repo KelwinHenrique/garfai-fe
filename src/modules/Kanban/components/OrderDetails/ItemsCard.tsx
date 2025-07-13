@@ -17,7 +17,7 @@ const ItemsCard = ({ order }: IItemsCardProps) => {
         </Typography>
 
         <List sx={{ p: 0 }}>
-          {order?.orderItems.map((item: IOrderItem, index: number) => (
+          {order?.items.map((item: IOrderItem, index: number) => (
             <Box key={item.id}>
               <ListItem sx={{ px: 0, py: 1.5, alignItems: "flex-start" }}>
                 <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2, width: "100%" }}>
@@ -79,11 +79,11 @@ const ItemsCard = ({ order }: IItemsCardProps) => {
                     </Box>
 
                     {/* Item customizations */}
-                    {item.orderChoices.length > 0 && (
+                    {item.choices.length > 0 && (
                       <Box sx={{ mt: 1 }}>
-                        {item.orderChoices.map((choice) => (
+                        {item.choices.map((choice) => (
                           <Box key={choice.id}>
-                            {choice.orderGarnishItems.map((garnish) => (
+                            {choice.garnishItems.map((garnish) => (
                               <Box
                                 key={garnish.id}
                                 sx={{
@@ -173,7 +173,7 @@ const ItemsCard = ({ order }: IItemsCardProps) => {
                   </Box>
                 </Box>
               </ListItem>
-              {index < order.orderItems.length - 1 && <Divider sx={{ my: 0.5 }} />}
+              {index < order.items.length - 1 && <Divider sx={{ my: 0.5 }} />}
             </Box>
           ))}
         </List>

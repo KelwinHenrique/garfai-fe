@@ -122,12 +122,12 @@ const SideBarListItemButton = ({ order, selectedOrderId, status, handleSelectOrd
               {formatTime(order.sentToWaitingMerchantAcceptanceAt)}
             </Typography>
             <Typography variant="body2" sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#000" }}>
-              {formatPrice(order.totalAmount)}
+              {formatPrice(order.subtotalAmount)}
             </Typography>
           </Box>
 
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem", color: "#000" }}>
-            {order.orderItems.length} {order.orderItems.length === 1 ? "item" : "itens"}
+            {order.items.length} {order.items.length === 1 ? "item" : "itens"}
           </Typography>
 
           {/* Accept Button for Waiting Orders */}

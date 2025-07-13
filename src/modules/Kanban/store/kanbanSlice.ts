@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchOrderByIdDetails, fetchOrdersKanban, merchantAcceptOrder, setOrderInDelivery, setOrderReadyForDelivery } from './kanbanRequests';
+import { fetchOrderByIdDetails, fetchOrdersKanban, IOrderKanbanResponse, merchantAcceptOrder, setOrderInDelivery, setOrderReadyForDelivery } from './kanbanRequests';
 import { toast } from 'react-toastify';
 import { IPayload } from '@/shared/types/IPayload';
 import { EOrderStatus, IOrder } from '@/modules/Orders/types/IOrder';
@@ -89,14 +89,18 @@ const menusSlice = createSlice({
     .addCase(fetchOrdersKanban.pending, (state) => {
       state.loadingOrdersKanban = true;
     })
-      .addCase(fetchOrdersKanban.fulfilled, (state, action: PayloadAction<IKanban>) => {
+      .addCase(fetchOrdersKanban.fulfilled, (state, action: PayloadAction<IOrderKanbanResponse>) => {
       state.loadingOrdersKanban = false;
 
         state.ordersKanban = Object.keys(action.payload).reduce((acc, key) => {
+
+          console.log('action.payload[key]', action.payload[key])
+
           return {
             ...acc,
             [key]: {
-              ...action.payload[key],
+              count: action.payload[key].length || 0,
+              rows: action.payload[key] || [],
               expanded: state.ordersKanban[key]?.expanded || false
             }
           };
