@@ -2,12 +2,11 @@ import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Box, Toolbar,
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import ListAltIcon from '@mui/icons-material/ListAlt'
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu'
-import BarChartIcon from '@mui/icons-material/BarChart'
-import GroupIcon from '@mui/icons-material/Group'
-import SettingsIcon from '@mui/icons-material/Settings'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useAppDispatch } from '@/store'
+import { logout } from '@/modules/Auth/store/authSlice'
 
 const drawerWidth = 220
 
@@ -15,9 +14,6 @@ const mainNavItems = [
   { label: 'Dashboard', icon: <DashboardIcon fontSize="small" />, path: '/dashboard' },
   { label: 'Kanban', icon: <ListAltIcon fontSize="small" />, path: '/kanban' },
   { label: 'Menus', icon: <RestaurantMenuIcon fontSize="small" />, path: '/menus' },
-  { label: 'Analytics', icon: <BarChartIcon fontSize="small" />, path: '/analytics' },
-  { label: 'Equipe', icon: <GroupIcon fontSize="small" />, path: '/team' },
-  { label: 'Configurações', icon: <SettingsIcon fontSize="small" />, path: '/settings' },
 ]
 
 const supportNavItems = [
@@ -27,6 +23,18 @@ const supportNavItems = [
 export function Sidebar() {
   const navigate = useNavigate()
   const location = useLocation()
+  const dispatch = useAppDispatch()
+
+  const handleLogout = () => {
+    // Limpa o reducer de autenticação
+    dispatch(logout())
+
+    // Remove o environmentId do localStorage
+    localStorage.removeItem('environmentId')
+
+    // Navega para a página de login
+    navigate('/login')
+  }
 
   return (
     <Drawer
@@ -100,7 +108,7 @@ export function Sidebar() {
       <Box sx={{ flexGrow: 1 }} />
       <Divider sx={{ my: 1, mx: 1 }} />
       <List>
-        <ListItemButton key="logout" onClick={() => navigate('/login')} sx={{ borderRadius: 2, mx: 0.5, my: 0.5, minHeight: 40 }}>
+        <ListItemButton key="logout" onClick={handleLogout} sx={{ borderRadius: 2, mx: 0.5, my: 0.5, minHeight: 40 }}>
           <ListItemIcon sx={{ minWidth: 32, color: '#e57373' }}><LogoutIcon fontSize="small" /></ListItemIcon>
           <ListItemText primary="Sair" primaryTypographyProps={{ fontSize: 15, fontWeight: 500, color: '#e57373' }} />
         </ListItemButton>

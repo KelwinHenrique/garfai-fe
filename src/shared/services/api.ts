@@ -17,13 +17,9 @@ const axiosServices = axios.create({
 
 axiosServices.interceptors.request.use(
   async (config) => {
-    const selectedAccess = localStorage.getItem('selectedAccess');
-    const selectedEnvironment = localStorage.getItem('environment');
-    if (selectedAccess) {
-      config.headers['access'] = selectedAccess;
-    }
+    const selectedEnvironment = localStorage.getItem('environmentId');
     if (selectedEnvironment) {
-      config.headers['environment'] = selectedEnvironment;
+      config.headers['environmentId'] = selectedEnvironment;
     }
 
     return config;
@@ -33,14 +29,14 @@ axiosServices.interceptors.request.use(
   }
 );
 
-axiosServices.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401 && !window.location.href.includes('/login')) {
-      window.location.pathname = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
+// axiosServices.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response?.status === 401 && !window.location.href.includes('/login')) {
+//       window.location.pathname = '/login';
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 export default axiosServices;

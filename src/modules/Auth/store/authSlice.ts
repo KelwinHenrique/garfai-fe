@@ -29,6 +29,13 @@ const authSlice = createSlice({
     clearUser: (state) => {
       state.user = null;
     },
+    logout: (state) => {
+      state.user = null;
+      state.userAccess = null;
+      state.selectedAccess = null;
+      state.loadingUser = false;
+      state.loadingUserAccess = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -55,5 +62,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setSelectedAccess, clearUser } = authSlice.actions;
+export const { setSelectedAccess, clearUser, logout } = authSlice.actions;
 export default authSlice.reducer; 

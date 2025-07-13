@@ -16,7 +16,7 @@ const MenusTable: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const menu = useAppSelector(state => state.menus.menus);
+  const menus = useAppSelector(state => state.menus.menus);
   const loadingTable = useAppSelector(state => state.menus.loadingTable);
   function renderActive(status: boolean) {
 
@@ -119,11 +119,11 @@ const MenusTable: React.FC = () => {
       </Box>
 
       <DataGrid
-        rows={menu?.rows || []}
+        rows={menus?.rows || []}
         columns={columns}
         loading={loadingTable}
         paginationMode="server"
-        rowCount={menu?.count || 0}
+        rowCount={menus?.count || 0}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
         }

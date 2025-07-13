@@ -4,6 +4,7 @@ import ordersReducer from '../modules/Orders/store/ordersSlice'
 import kanbanReducer from '@/modules/Kanban/store/kanbanSlice'
 import menusReducer from '@/modules/Menus/store/menusSlice'
 import authReducer from '@/modules/Auth/store/authSlice'
+import menuReducer from '@/modules/Menu/store/menuSlice'
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     kanban: kanbanReducer,
     menus: menusReducer,
     auth: authReducer,
+    menu: menuReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

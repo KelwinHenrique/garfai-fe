@@ -10,6 +10,7 @@ import { SelectAccessRoute } from './components/SelectAccessRoute'
 import { dashboardRoutes } from '@/modules/Dashboard/dashboard.routes'
 import { kanbanRoutes } from '@/modules/Kanban/kanban.routes'
 import { menusRoutes } from '@/modules/Menus/menus.routes'
+import { menuRoutes } from '@/modules/Menu/menu.routes'
 
 export const AppRoutes = () => {
   return (
@@ -61,6 +62,16 @@ export const AppRoutes = () => {
       ))}
 
       {menusRoutes.map(route => (
+        <Route key={route.path} path={route.path} element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+              {route.element}
+            </Suspense>
+          </ProtectedRoute>
+        } />
+      ))}
+
+      {menuRoutes.map(route => (
         <Route key={route.path} path={route.path} element={
           <ProtectedRoute>
             <Suspense fallback={<LoadingSpinner />}>

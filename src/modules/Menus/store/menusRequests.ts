@@ -8,7 +8,7 @@ export const fetchMenus = createAsyncThunk(
   'menus/fetchMenus',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosServices.get('/menus');
+      const response = await axiosServices.get('/menu');
 
       console.log('response', response)
 
@@ -20,29 +20,3 @@ export const fetchMenus = createAsyncThunk(
     }
   }
 );
-
-// export const createMenu = createAsyncThunk(
-//   'menus/createMenu',
-//   async (body: IFormCreateMenuValues, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.post(`/menus`, body);
-//       const { menu } = response.data;
-//       return { menu };
-//     } catch (error) {
-//       return rejectWithValue('create menu failed');
-//     }
-//   }
-// );
-
-// export const updateChatsConfigDetail = createAsyncThunk(
-//   'menus/updateChatsConfig',
-//   async ({ menuId, body }: { menuId: string; body: IChatFormData }, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.put(`/menus/${menuId}`, body);
-//       const { menu } = response.data;
-//       return { menu };
-//     } catch (error) {
-//       return rejectWithValue('Login failed');
-//     }
-//   }
-// );
