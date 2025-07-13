@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { Typography, Box, CircularProgress, Alert } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '../../../store/index'
-import { OrderCard } from '../components/OrderCard'
 import { RootState } from '../../../store/index'
 
 export function OrdersPage() {
@@ -34,21 +33,10 @@ export function OrdersPage() {
         Pedidos
       </Typography>
       
-      {orders.length === 0 ? (
+      {orders.length === 0 && (
         <Typography variant="body1" color="text.secondary">
           Nenhum pedido encontrado.
         </Typography>
-      ) : (
-          // <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-          //   {orders.map((order) => (
-          //     <Box key={order.id} sx={{ flex: '1 1 300px', minWidth: 0 }}>
-          //       <OrderCard
-          //         order={order}
-          //         onClick={() => console.log('Clicou no pedido:', order.id)}
-          //       />
-          //     </Box>
-          //   ))}
-          // </Box>
       )}
     </Box>
   )

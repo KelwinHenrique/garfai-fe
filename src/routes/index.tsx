@@ -9,6 +9,7 @@ import { LoginPage, SelectAccessPage, OrdersPage } from './lazyComponents'
 import { SelectAccessRoute } from './components/SelectAccessRoute'
 import { dashboardRoutes } from '@/modules/Dashboard/dashboard.routes'
 import { kanbanRoutes } from '@/modules/Kanban/kanban.routes'
+import { menusRoutes } from '@/modules/Menus/menus.routes'
 
 export const AppRoutes = () => {
   return (
@@ -50,6 +51,16 @@ export const AppRoutes = () => {
       ))}
 
       {kanbanRoutes.map(route => (
+        <Route key={route.path} path={route.path} element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+              {route.element}
+            </Suspense>
+          </ProtectedRoute>
+        } />
+      ))}
+
+      {menusRoutes.map(route => (
         <Route key={route.path} path={route.path} element={
           <ProtectedRoute>
             <Suspense fallback={<LoadingSpinner />}>
